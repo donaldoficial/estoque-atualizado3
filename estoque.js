@@ -54,10 +54,16 @@ function adicionarProduto(nome, tipo, empresaCodigo, fornecedorCodigo, endereco 
         produtoExistente.fabricacao = fabricacao;
         produtoExistente.validade = validade;
         console.log('Produto atualizado:', produtoExistente); // Log para depuração
+
+        // Registra uma movimentação de entrada
+        registrarMovimentacao('entrada', null, empresaCodigo, nome, quantidade, 'Atualização de estoque');
     } else {
         // Adiciona um novo produto
         estoque.produtos.push({ nome, tipo, empresaCodigo, fornecedorCodigo, endereco, quantidade, fabricacao, validade });
         console.log('Novo produto adicionado:', { nome, tipo, empresaCodigo, fornecedorCodigo, endereco, quantidade, fabricacao, validade }); // Log para depuração
+
+        // Registra uma movimentação de entrada
+        registrarMovimentacao('entrada', null, empresaCodigo, nome, quantidade, 'Novo produto adicionado');
     }
 
     localStorage.setItem('estoque', JSON.stringify(estoque));
@@ -286,4 +292,32 @@ function verificarLogin(usuario, senha) {
 function definirAutenticado(autenticado) {
     localStorage.setItem('autenticado', autenticado);
     console.log('Estado de autenticação definido como:', autenticado);
+}
+
+// Função para verificar produtos em estado crítico
+function verificarDataCritica(limiteCritico = 10) {
+    const estoque = JSON.parse(localStorage.getItem('estoque'));
+    const produtosCriticos = estoque.produtos.filter(p => p.quantidade <= limiteCritico);
+
+    console.log('Produtos em estado crítico:', produtosCriticos);
+    return produtosCriticos;
+}
+
+// Função para exibir produtos em estado crítico
+function exibirDataCritica() {
+    const produtosCriticos = verificarDataCritica();
+
+    if (produtosCriticos.length > 0) {
+        console.log('=== Produtos em Estado Crítico ===');
+        produtosCriticos.forEach(produto => {
+            console.log(`Produto: ${produto.nome}`);
+            console.log(`Quantidade: ${produto.quantidade}`);
+            console.log(`Endereço: ${produto.endereco}`);
+            console.log(`Empresa: ${produto.empresaCodigo}`);
+            console.log(`Fornecedor: ${produto.fornecedorCodigo}`);
+            console.log('---------------------------');
+        });
+    } else {
+        console.log('Nenhum produto em estado crítico.');
+    }
 }
