@@ -6,12 +6,68 @@
     <title>Data Crítica</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
-    <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3.2.0/dist/email.min.js"></script>
+</head>
+<body>
+    <!-- Menu Lateral -->
+    <div class="menu-lateral">
+        <button class="btn btn-primary" onclick="toggleMenu()">☰</button>
+        <div id="menu-conteudo" class="menu-conteudo">
+            <a href="cadastro-empresa.html">Cadastrar Empresa</a>
+            <a href="cadastro-produto.html">Cadastrar Produto</a>
+            <a href="enderecamento.html">Endereçamento</a>
+            <a href="movimentacao.html">Movimentação</a>
+            <a href="conferencia.html">Conferência</a>
+            <a href="entrada-nota.html">Entrada de Nota</a>
+            <a href="saida-nota.html">Saída de Nota</a>
+            <a href="gerenciar-produtos.html">Gerenciar Produtos</a>
+            <a href="data-critica.html">Data Crítica</a>
+        </div>
+    </div>
+
+    <!-- Conteúdo Principal -->
+    <div class="container mt-5">
+        <h1>Data Crítica</h1>
+        <a href="estoque.html" class="btn btn-secondary mb-3">Voltar</a>
+        <form id="form-data-critica">
+            <div class="mb-3">
+                <label for="empresa" class="form-label">Empresa</label>
+                <select class="form-control" id="empresa" required>
+                    <option value="">Selecione uma empresa</option>
+                    <!-- Opções de empresas serão preenchidas via JavaScript -->
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary w-100">Consultar Movimentações</button>
+        </form>
+
+        <!-- Tabela de Movimentações -->
+        <h2 class="mt-5">Movimentações da Empresa</h2>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Produto</th>
+                    <th>Quantidade</th>
+                    <th>Fabricação</th>
+                    <th>Validade</th>
+                    <th>Terço</th>
+                    <th>Data Crítica</th>
+                    <th>Alerta</th>
+                </tr>
+            </thead>
+            <tbody id="tabela-movimentacoes"></tbody>
+        </table>
+    </div>
+
+    <script src="estoque.js"></script>
     <script>
-        // Inicializa o EmailJS com suas credenciais
-        (function() {
-            emailjs.init("SEU_USER_ID"); // Substitua pelo seu User ID do EmailJS
-        })();
+        // Preenche as opções de empresas
+        const estoque = JSON.parse(localStorage.getItem('estoque')) || { empresas: [], produtos: [], movimentacoes: [] };
+        const selectEmpresas = document.getElementById('empresa');
+        estoque.empresas.forEach(empresa => {
+            const option = document.createElement('option');
+            option.value = empresa.codigo;
+            option.textContent = empresa.nome;
+            selectEmpresas.appendChild(option);
+        });
 
         // Função para calcular o terço da validade e a data crítica
         function calcularTerco(fabricacao, validade) {
@@ -53,88 +109,6 @@
             return { terco, alerta, dataCritica };
         }
 
-        // Função para enviar e-mail de alerta
-        function enviarEmailAlerta(produto, validade, alerta) {
-            const templateParams = {
-                produto: produto,
-                validade: validade,
-                alerta: alerta,
-            };
-
-            // Envia o e-mail usando o EmailJS
-            emailjs.send('service_12k4swg', '__ejs-test-mail-service__', templateParams)
-                .then(response => {
-                    console.log('E-mail enviado com sucesso!', response.status, response.text);
-                })
-                .catch(error => {
-                    console.error('Erro ao enviar e-mail:', error);
-                });
-        }
-
-        // Função para verificar produtos críticos e enviar e-mails
-        function verificarProdutosCriticos() {
-            const estoque = JSON.parse(localStorage.getItem('estoque')) || { produtos: [] };
-            const produtosCriticos = estoque.produtos.filter(produto => {
-                const { alerta } = calcularTerco(produto.fabricacao, produto.validade);
-                return alerta.includes('Alerta'); // Verifica se há alerta
-            });
-
-            produtosCriticos.forEach(produto => {
-                const { alerta } = calcularTerco(produto.fabricacao, produto.validade);
-                enviarEmailAlerta(produto.nome, produto.validade, alerta);
-            });
-        }
-
-        // Executa a verificação ao carregar a página
-        document.addEventListener('DOMContentLoaded', verificarProdutosCriticos);
-    </script>
-</head>
-<body>
-    <!-- Conteúdo Principal -->
-    <div class="container mt-5">
-        <h1>Data Crítica</h1>
-        <a href="dashboard.html" class="btn btn-secondary mb-3">Voltar</a>
-        <form id="form-data-critica">
-            <div class="mb-3">
-                <label for="empresa" class="form-label">Empresa</label>
-                <select class="form-control" id="empresa" required>
-                    <option value="">Selecione uma empresa</option>
-                    <!-- Opções de empresas serão preenchidas via JavaScript -->
-                </select>
-            </div>
-            <button type="submit" class="btn btn-primary w-100">Consultar Movimentações</button>
-        </form>
-
-        <!-- Tabela de Movimentações -->
-        <h2 class="mt-5">Movimentações da Empresa</h2>
-        <table class="table table-striped">
-            <thead>
-                <tr>
-                    <th>Produto</th>
-                    <th>Fornecedor</th>
-                    <th>Quantidade</th>
-                    <th>Fabricação</th>
-                    <th>Validade</th>
-                    <th>Terço</th>
-                    <th>Data Crítica</th>
-                    <th>Alerta</th>
-                </tr>
-            </thead>
-            <tbody id="tabela-movimentacoes"></tbody>
-        </table>
-    </div>
-
-    <script>
-        // Preenche as opções de empresas
-        const estoque = JSON.parse(localStorage.getItem('estoque')) || { empresas: [], produtos: [], movimentacoes: [], fornecedores: [] };
-        const selectEmpresas = document.getElementById('empresa');
-        estoque.empresas.forEach(empresa => {
-            const option = document.createElement('option');
-            option.value = empresa.codigo;
-            option.textContent = empresa.nome;
-            selectEmpresas.appendChild(option);
-        });
-
         // Função para formatar a data no formato brasileiro (dd/mm/aaaa)
         function formatarDataBrasileira(data) {
             if (!data) return '-';
@@ -155,12 +129,10 @@
             movimentacoes.forEach(movimentacao => {
                 const produto = estoque.produtos.find(p => p.nome === movimentacao.produto);
                 if (produto) {
-                    const fornecedor = estoque.fornecedores.find(f => f.codigo === produto.fornecedorCodigo);
                     const { terco, alerta, dataCritica } = calcularTerco(produto.fabricacao, produto.validade);
                     const row = document.createElement('tr');
                     row.innerHTML = `
                         <td>${movimentacao.produto}</td>
-                        <td>${fornecedor ? fornecedor.nome : 'N/A'}</td>
                         <td>${movimentacao.quantidade}</td>
                         <td>${formatarDataBrasileira(produto.fabricacao)}</td>
                         <td>${formatarDataBrasileira(produto.validade)}</td>
@@ -179,6 +151,12 @@
             const empresaCodigo = document.getElementById('empresa').value;
             carregarMovimentacoes(empresaCodigo);
         });
+
+        // Função para alternar o menu lateral
+        function toggleMenu() {
+            const menu = document.getElementById('menu-conteudo');
+            menu.classList.toggle('menu-aberto');
+        }
     </script>
 </body>
 </html>
