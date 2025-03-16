@@ -60,6 +60,7 @@
                     <th>Nota</th>
                     <th>Empresa</th>
                     <th>Produto</th>
+                    <th>Fornecedor</th>
                     <th>Quantidade</th>
                     <th>Estoque Após Movimentação</th>
                     <th>Data e Hora</th>
@@ -129,11 +130,15 @@
             // Exibe as movimentações filtradas
             movimentacoesComEstoque.forEach((movimentacao, index) => {
                 const empresa = estoque.empresas.find(e => e.codigo === movimentacao.empresaCodigo);
+                const produto = estoque.produtos.find(p => p.nome === movimentacao.produto);
+                const fornecedor = produto ? estoque.fornecedores.find(f => f.codigo === produto.fornecedorCodigo) : null;
+
                 const row = document.createElement('tr');
                 row.innerHTML = `
                     <td>${movimentacao.numeroNota || 'N/A'}</td>
                     <td>${empresa ? empresa.nome : 'Empresa não encontrada'}</td>
                     <td>${movimentacao.produto}</td>
+                    <td>${fornecedor ? fornecedor.nome : 'N/A'}</td>
                     <td>${movimentacao.quantidade}</td>
                     <td>${movimentacao.estoqueAposMovimentacao}</td>
                     <td>${movimentacao.data}</td>
@@ -178,7 +183,7 @@
             doc.text("Relatório de Movimentações", 10, 10);
 
             // Dados da tabela
-            const headers = [["Nota", "Empresa", "Produto", "Quantidade", "Estoque Após Movimentação", "Data e Hora", "Tipo"]];
+            const headers = [["Nota", "Empresa", "Produto", "Fornecedor", "Quantidade", "Estoque Após Movimentação", "Data e Hora", "Tipo"]];
             const rows = [];
 
             const movimentacoes = document.querySelectorAll("#tabela-movimentacoes tr");
