@@ -22,17 +22,20 @@
             return date && date.getMonth() + 1 === parseInt(mes);
         }
 
+        // Função para converter data no formato brasileiro (dd/mm/aaaa) para objeto Date
+        function converterData(data) {
+            if (!validarData(data)) return null;
+            const [dia, mes, ano] = data.split('/');
+            return new Date(ano, mes - 1, dia);
+        }
+
         // Função para calcular o terço da validade e a data crítica
         function calcularTerco(fabricacao, validade) {
-            if (!validarData(fabricacao) || !validarData(validade)) {
-                return { terco: 'Data inválida', alerta: 'Data inválida', dataCritica: null };
-            }
-
-            const dataFabricacao = new Date(fabricacao.split('/').reverse().join('-'));
-            const dataValidade = new Date(validade.split('/').reverse().join('-'));
+            const dataFabricacao = converterData(fabricacao);
+            const dataValidade = converterData(validade);
 
             // Verifica se as datas são válidas
-            if (isNaN(dataFabricacao.getTime()) || isNaN(dataValidade.getTime())) {
+            if (!dataFabricacao || !dataValidade || isNaN(dataFabricacao.getTime()) || isNaN(dataValidade.getTime())) {
                 return { terco: 'Data inválida', alerta: 'Data inválida', dataCritica: null };
             }
 
