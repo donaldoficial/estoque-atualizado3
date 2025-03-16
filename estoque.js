@@ -6,7 +6,8 @@ if (!localStorage.getItem('estoque')) {
         empresas: [],
         produtos: [],
         movimentacoes: [],
-        usuarios: [] // Adiciona uma lista de usuários
+        usuarios: [],
+        fornecedores: [] // Adiciona uma lista de fornecedores
     }));
     console.log('LocalStorage inicializado com sucesso!'); // Log para depuração
 }
@@ -40,7 +41,7 @@ function excluirEmpresa(codigo) {
 }
 
 // Função para adicionar um produto
-function adicionarProduto(nome, tipo, empresaCodigo, endereco, quantidade, fabricacao, validade) {
+function adicionarProduto(nome, tipo, empresaCodigo, fornecedorCodigo, endereco, quantidade, fabricacao, validade) {
     const estoque = JSON.parse(localStorage.getItem('estoque'));
 
     // Verifica se o produto já existe
@@ -55,8 +56,8 @@ function adicionarProduto(nome, tipo, empresaCodigo, endereco, quantidade, fabri
         console.log('Produto atualizado:', produtoExistente); // Log para depuração
     } else {
         // Adiciona um novo produto
-        estoque.produtos.push({ nome, tipo, empresaCodigo, endereco, quantidade, fabricacao, validade });
-        console.log('Novo produto adicionado:', { nome, tipo, empresaCodigo, endereco, quantidade, fabricacao, validade }); // Log para depuração
+        estoque.produtos.push({ nome, tipo, empresaCodigo, fornecedorCodigo, endereco, quantidade, fabricacao, validade });
+        console.log('Novo produto adicionado:', { nome, tipo, empresaCodigo, fornecedorCodigo, endereco, quantidade, fabricacao, validade }); // Log para depuração
     }
 
     localStorage.setItem('estoque', JSON.stringify(estoque));
@@ -214,59 +215,31 @@ function buscarProdutosPorEndereco(endereco) {
     return produtos;
 }
 
-// Função para adicionar um usuário
-function adicionarUsuario(nome, email, numero, usuario, senha) {
+// Função para adicionar um fornecedor
+function adicionarFornecedor(nome, codigo) {
     const estoque = JSON.parse(localStorage.getItem('estoque'));
-    console.log('Estoque atual:', estoque); // Log para depuração
 
-    // Verifica se a lista de usuários existe e é um array
-    if (!estoque.usuarios || !Array.isArray(estoque.usuarios)) {
-        console.error('Erro: Lista de usuários não encontrada ou inválida. Inicializando lista de usuários...');
-        estoque.usuarios = []; // Inicializa a lista de usuários como um array vazio
+    // Verifica se a lista de fornecedores existe
+    if (!estoque.fornecedores) {
+        estoque.fornecedores = [];
     }
 
-    // Verifica se o usuário já existe
-    const usuarioExistente = estoque.usuarios.find(u => u.usuario === usuario);
-    if (usuarioExistente) {
-        console.log('Usuário já existe:', usuarioExistente); // Log para depuração
-        return false; // Usuário já existe
+    // Verifica se o fornecedor já existe
+    const fornecedorExistente = estoque.fornecedores.find(f => f.codigo === codigo);
+    if (fornecedorExistente) {
+        console.log('Fornecedor já existe:', fornecedorExistente);
+        return false;
     }
 
-    // Adiciona o novo usuário
-    estoque.usuarios.push({ nome, email, numero, usuario, senha });
+    // Adiciona o novo fornecedor
+    estoque.fornecedores.push({ nome, codigo });
     localStorage.setItem('estoque', JSON.stringify(estoque));
-    console.log('Novo usuário adicionado:', { nome, email, numero, usuario, senha }); // Log para depuração
+    console.log('Novo fornecedor adicionado:', { nome, codigo });
     return true;
 }
 
-// Função para verificar o login
-function verificarLogin(usuario, senha) {
+// Função para buscar todos os fornecedores
+function buscarTodosFornecedores() {
     const estoque = JSON.parse(localStorage.getItem('estoque'));
-    console.log('Verificando login para:', usuario); // Log para depuração
-
-    // Verifica se a lista de usuários existe e é um array
-    if (!estoque.usuarios || !Array.isArray(estoque.usuarios)) {
-        console.error('Erro: Lista de usuários não encontrada ou inválida.');
-        return false;
-    }
-
-    const usuarioEncontrado = estoque.usuarios.find(u => u.usuario === usuario && u.senha === senha);
-    if (usuarioEncontrado) {
-        console.log('Login bem-sucedido para:', usuario); // Log para depuração
-        return true;
-    } else {
-        console.log('Login falhou para:', usuario); // Log para depuração
-        return false;
-    }
-}
-
-// Função para verificar se o usuário está autenticado
-function estaAutenticado() {
-    return localStorage.getItem('autenticado') === 'true';
-}
-
-// Função para definir o estado de autenticação
-function definirAutenticado(autenticado) {
-    localStorage.setItem('autenticado', autenticado);
-    console.log('Estado de autenticação definido como:', autenticado); // Log para depuração
+    return estoque.fornecedores || [];
 }
