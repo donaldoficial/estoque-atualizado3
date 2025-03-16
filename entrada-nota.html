@@ -36,7 +36,9 @@
             </div>
             <div class="mb-3">
                 <label for="endereco" class="form-label">Endereço (Vaga)</label>
-                <select class="form-control" id="endereco" required></select>
+                <select class="form-control" id="endereco">
+                    <option value="">Selecione o endereço (opcional)</option>
+                </select>
             </div>
             <div class="mb-3">
                 <label for="fabricacao" class="form-label">Data de Fabricação</label>
@@ -105,7 +107,7 @@
                 estoque.produtos.forEach(prod => {
                     let option = document.createElement("option");
                     option.value = prod.nome;
-                    option.textContent = prod.nome; // Removido o endereço do nome do produto
+                    option.textContent = prod.nome;
                     selectProdutos.appendChild(option);
                 });
             }
@@ -159,7 +161,7 @@
                 const empresaCodigo = document.getElementById("empresa").value;
                 const produtoNome = document.getElementById("produto").value;
                 const quantidade = parseInt(document.getElementById("quantidade").value);
-                const endereco = document.getElementById("endereco").value;
+                const endereco = document.getElementById("endereco").value || atribuirEnderecoAutomaticamente();
                 const fabricacao = document.getElementById("fabricacao").value;
                 const validade = document.getElementById("validade").value;
 
@@ -172,6 +174,13 @@
                 alert("Entrada de nota registrada com sucesso!");
                 window.location.href = "dashboard.html";
             });
+
+            // Função para atribuir automaticamente um endereço disponível
+            function atribuirEnderecoAutomaticamente() {
+                const enderecosUsados = estoque.produtos.map(prod => prod.endereco);
+                const enderecosDisponiveis = ['A1', 'A2', 'A3', 'B1', 'B2', 'B3'].filter(end => !enderecosUsados.includes(end));
+                return enderecosDisponiveis[0] || 'Sem endereço disponível';
+            }
         });
     </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
