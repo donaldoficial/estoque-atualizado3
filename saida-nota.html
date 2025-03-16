@@ -84,6 +84,7 @@
                 const empresaCodigo = document.getElementById("empresa").value;
                 const produtoNome = document.getElementById("produto").value;
                 const quantidade = parseInt(document.getElementById("quantidade").value);
+                const endereco = inputEndereco.value;
 
                 // Verifica se a quantidade em estoque é suficiente
                 const estoqueAtual = calcularEstoqueAtual(produtoNome);
@@ -96,7 +97,7 @@
                 atualizarEstoque(produtoNome, -quantidade);
 
                 // Registra a movimentação
-                registrarMovimentacao('saida', numeroNota, empresaCodigo, produtoNome, quantidade);
+                registrarMovimentacao('saida', numeroNota, empresaCodigo, produtoNome, quantidade, `Saída do endereço ${endereco}`);
 
                 alert("Saída de nota registrada com sucesso!");
                 window.location.href = "dashboard.html";
