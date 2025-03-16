@@ -80,12 +80,16 @@
         });
 
         // Preenche fornecedores
-        estoque.fornecedores.forEach(fornecedor => {
-            const option = document.createElement('option');
-            option.value = fornecedor.codigo;
-            option.textContent = fornecedor.nome;
-            selectFornecedores.appendChild(option);
-        });
+        if (estoque.fornecedores && estoque.fornecedores.length > 0) {
+            estoque.fornecedores.forEach(fornecedor => {
+                const option = document.createElement('option');
+                option.value = fornecedor.codigo;
+                option.textContent = fornecedor.nome;
+                selectFornecedores.appendChild(option);
+            });
+        } else {
+            console.log("Nenhum fornecedor cadastrado.");
+        }
 
         // Função para cadastrar produto
         document.getElementById('form-cadastro-produto').addEventListener('submit', function (e) {
