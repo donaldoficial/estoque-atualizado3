@@ -13,10 +13,23 @@
             emailjs.init("SEU_USER_ID"); // Substitua pelo seu User ID do EmailJS
         })();
 
+        // Função para validar datas no formato brasileiro (dd/mm/aaaa)
+        function validarData(data) {
+            const regexData = /^\d{2}\/\d{2}\/\d{4}$/;
+            if (!regexData.test(data)) return false;
+            const [dia, mes, ano] = data.split('/');
+            const date = new Date(ano, mes - 1, dia);
+            return date && date.getMonth() + 1 === parseInt(mes);
+        }
+
         // Função para calcular o terço da validade e a data crítica
         function calcularTerco(fabricacao, validade) {
-            const dataFabricacao = new Date(fabricacao);
-            const dataValidade = new Date(validade);
+            if (!validarData(fabricacao) || !validarData(validade)) {
+                return { terco: 'Data inválida', alerta: 'Data inválida', dataCritica: null };
+            }
+
+            const dataFabricacao = new Date(fabricacao.split('/').reverse().join('-'));
+            const dataValidade = new Date(validade.split('/').reverse().join('-'));
 
             // Verifica se as datas são válidas
             if (isNaN(dataFabricacao.getTime()) || isNaN(dataValidade.getTime())) {
@@ -71,9 +84,11 @@
             emailjs.send('service_12k4swg', '__ejs-test-mail-service__', templateParams)
                 .then(response => {
                     console.log('E-mail enviado com sucesso!', response.status, response.text);
+                    exibirMensagem('E-mail de alerta enviado com sucesso!', 'sucesso');
                 })
                 .catch(error => {
                     console.error('Erro ao enviar e-mail:', error);
+                    exibirMensagem('Erro ao enviar e-mail de alerta.', 'erro');
                 });
         }
 
@@ -89,6 +104,15 @@
                 const { alerta } = calcularTerco(produto.fabricacao, produto.validade);
                 enviarEmailAlerta(produto.nome, produto.validade, alerta);
             });
+        }
+
+        // Função para exibir mensagens na interface
+        function exibirMensagem(mensagem, tipo = 'sucesso') {
+            const divMensagem = document.createElement('div');
+            divMensagem.className = `alert alert-${tipo} mt-3`;
+            divMensagem.textContent = mensagem;
+            document.body.prepend(divMensagem);
+            setTimeout(() => divMensagem.remove(), 3000);
         }
 
         // Executa a verificação ao carregar a página
