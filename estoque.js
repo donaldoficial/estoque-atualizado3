@@ -6,7 +6,7 @@ if (!localStorage.getItem('estoque')) {
         empresas: [],
         produtos: [],
         movimentacoes: [],
-        usuarios: [],
+        usuarios: [], // Adiciona uma lista de usuários
         fornecedores: [] // Adiciona uma lista de fornecedores
     }));
     console.log('LocalStorage inicializado com sucesso!'); // Log para depuração
@@ -280,4 +280,10 @@ function verificarLogin(usuario, senha) {
         console.log('Login falhou para:', usuario);
         return false;
     }
+}
+
+// Função para definir o estado de autenticação
+function definirAutenticado(autenticado) {
+    localStorage.setItem('autenticado', autenticado);
+    console.log('Estado de autenticação definido como:', autenticado);
 }
