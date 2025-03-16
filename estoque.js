@@ -41,7 +41,7 @@ function excluirEmpresa(codigo) {
 }
 
 // Função para adicionar um produto
-function adicionarProduto(nome, tipo, empresaCodigo, fornecedorCodigo, endereco = '', quantidade = 0, fabricacao = '', validade = '') {
+function adicionarProduto(nome, tipo, empresaCodigo, endereco = '', quantidade = 0, fabricacao = '', validade = '') {
     const estoque = JSON.parse(localStorage.getItem('estoque'));
 
     // Verifica se o produto já existe
@@ -59,8 +59,8 @@ function adicionarProduto(nome, tipo, empresaCodigo, fornecedorCodigo, endereco 
         registrarMovimentacao('entrada', null, empresaCodigo, nome, quantidade, 'Atualização de estoque');
     } else {
         // Adiciona um novo produto
-        estoque.produtos.push({ nome, tipo, empresaCodigo, fornecedorCodigo, endereco, quantidade, fabricacao, validade });
-        console.log('Novo produto adicionado:', { nome, tipo, empresaCodigo, fornecedorCodigo, endereco, quantidade, fabricacao, validade }); // Log para depuração
+        estoque.produtos.push({ nome, tipo, empresaCodigo, endereco, quantidade, fabricacao, validade });
+        console.log('Novo produto adicionado:', { nome, tipo, empresaCodigo, endereco, quantidade, fabricacao, validade }); // Log para depuração
 
         // Registra uma movimentação de entrada
         registrarMovimentacao('entrada', null, empresaCodigo, nome, quantidade, 'Novo produto adicionado');
@@ -320,4 +320,12 @@ function exibirDataCritica() {
     } else {
         console.log('Nenhum produto em estado crítico.');
     }
+}
+
+// Função para encontrar o primeiro endereço disponível
+function encontrarEnderecoDisponivel() {
+    const estoque = JSON.parse(localStorage.getItem('estoque'));
+    const enderecosUsados = estoque.produtos.map(prod => prod.endereco);
+    const enderecosDisponiveis = ['A1', 'A2', 'A3', 'B1', 'B2', 'B3', 'C1', 'C2', 'C3', 'D1', 'D2', 'D3'].filter(end => !enderecosUsados.includes(end));
+    return enderecosDisponiveis[0] || 'Sem endereço disponível';
 }
