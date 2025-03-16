@@ -194,4 +194,50 @@
                                            andar === 'cima' && index < 2 ? 'andar-cima-ocupadas' :
                                            andar === 'baixo' ? 'andar-baixo-2-ocupadas' : 'andar-cima-2-ocupadas';
                 const containerDisponiveisId = andar === 'baixo' && index < 2 ? 'andar-baixo-disponiveis' :
-                                             
+                                              andar === 'cima' && index < 2 ? 'andar-cima-disponiveis' :
+                                              andar === 'baixo' ? 'andar-baixo-2-disponiveis' : 'andar-cima-2-disponiveis';
+
+                const containerOcupadas = document.getElementById(containerOcupadasId);
+                const containerDisponiveis = document.getElementById(containerDisponiveisId);
+
+                for (let i = 1; i <= 20; i++) {
+                    const vaga = `${letra}${i}`;
+                    const produtosNaVaga = produtos.filter(p => p.endereco === vaga);
+
+                    const vagaDiv = document.createElement('div');
+                    vagaDiv.className = 'col-md-2 mb-2';
+                    if (produtosNaVaga.length > 0) {
+                        vagaDiv.innerHTML = `
+                            <div class="vaga-card" data-status="ocupada">
+                                <h5>Vaga ${vaga}</h5>
+                                <p>
+                                    ${produtosNaVaga.map(produto => {
+                                        const empresa = empresas.find(e => e.codigo === produto.empresaCodigo);
+                                        return `
+                                            ${produto.nome}<br>
+                                            ${produto.quantidade}x<br>
+                                            ${empresa ? empresa.nome : 'N/A'}
+                                        `;
+                                    }).join('<br>')}
+                                </p>
+                            </div>
+                        `;
+                        containerOcupadas.appendChild(vagaDiv);
+                    } else {
+                        vagaDiv.innerHTML = `
+                            <div class="vaga-card" data-status="disponivel">
+                                <h5>Vaga ${vaga}</h5>
+                                <p>Disponível</p>
+                            </div>
+                        `;
+                        containerDisponiveis.appendChild(vagaDiv);
+                    }
+                }
+            });
+        }
+
+        // Carrega as vagas ao abrir a página
+        gerarVagas();
+    </script>
+</body>
+</html>
