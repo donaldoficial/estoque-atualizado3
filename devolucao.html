@@ -67,10 +67,24 @@
                 const quantidade = parseInt(document.getElementById("quantidade").value);
                 const motivo = document.getElementById("motivo").value;
 
+                // Verifica se a nota existe e se é uma entrada
+                const movimentacoes = buscarMovimentacoesPorNota(numeroNota, 'entrada');
+                if (movimentacoes.length === 0) {
+                    alert("Nota não encontrada ou não é uma entrada válida.");
+                    return;
+                }
+
+                // Verifica se a quantidade a ser devolvida é válida
+                const movimentacaoEntrada = movimentacoes[0];
+                if (quantidade > movimentacaoEntrada.quantidade) {
+                    alert("Quantidade a ser devolvida excede a quantidade original da nota.");
+                    return;
+                }
+
                 // Atualiza o estoque
                 atualizarEstoque(produtoNome, quantidade);
 
-                // Registra a movimentação
+                // Registra a movimentação de devolução
                 registrarMovimentacao('devolucao', numeroNota, empresaCodigo, produtoNome, quantidade, motivo);
 
                 alert("Devolução registrada com sucesso!");
