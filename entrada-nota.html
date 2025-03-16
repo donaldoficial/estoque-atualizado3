@@ -31,6 +31,12 @@
                 </div>
             </div>
             <div class="mb-3">
+                <label for="fornecedor" class="form-label">Fornecedor</label>
+                <select class="form-control" id="fornecedor" required>
+                    <option value="">Selecione o fornecedor</option>
+                </select>
+            </div>
+            <div class="mb-3">
                 <label for="quantidade" class="form-label">Quantidade</label>
                 <input type="number" class="form-control" id="quantidade" required>
             </div>
@@ -82,6 +88,7 @@
             const estoque = JSON.parse(localStorage.getItem('estoque'));
             const selectEmpresas = document.getElementById("empresa");
             const selectProdutos = document.getElementById("produto");
+            const selectFornecedores = document.getElementById("fornecedor");
             const inputEndereco = document.getElementById("endereco");
             const selectNovoProdutoEmpresa = document.getElementById("novoProdutoEmpresa");
 
@@ -110,6 +117,18 @@
                 });
             }
             carregarProdutos();
+
+            // Preenche fornecedores
+            function carregarFornecedores() {
+                selectFornecedores.innerHTML = '<option value="">Selecione o fornecedor</option>';
+                estoque.fornecedores.forEach(fornecedor => {
+                    let option = document.createElement("option");
+                    option.value = fornecedor.codigo;
+                    option.textContent = fornecedor.nome;
+                    selectFornecedores.appendChild(option);
+                });
+            }
+            carregarFornecedores();
 
             // Função para encontrar o primeiro endereço disponível
             function encontrarEnderecoDisponivel() {
@@ -153,16 +172,17 @@
                 const numeroNota = document.getElementById("numeroNota").value;
                 const empresaCodigo = document.getElementById("empresa").value;
                 const produtoNome = document.getElementById("produto").value;
+                const fornecedorCodigo = document.getElementById("fornecedor").value;
                 const quantidade = parseInt(document.getElementById("quantidade").value);
                 const endereco = inputEndereco.value;
                 const fabricacao = document.getElementById("fabricacao").value;
                 const validade = document.getElementById("validade").value;
 
                 // Adiciona o produto ao estoque com o endereço
-                adicionarProduto(produtoNome, 'unidade', empresaCodigo, endereco, quantidade, fabricacao, validade);
+                adicionarProduto(produtoNome, 'unidade', empresaCodigo, fornecedorCodigo, endereco, quantidade, fabricacao, validade);
 
                 // Registra a movimentação
-                registrarMovimentacao('entrada', numeroNota, empresaCodigo, produtoNome, quantidade);
+                registrarMovimentacao('entrada', numeroNota, empresaCodigo, produtoNome, quantidade, `Fornecedor: ${fornecedorCodigo}`);
 
                 alert("Entrada de nota registrada com sucesso!");
                 window.location.href = "enderecamento.html"; // Redireciona para o endereçamento
