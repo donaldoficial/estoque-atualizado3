@@ -41,7 +41,7 @@ function excluirEmpresa(codigo) {
 }
 
 // Função para adicionar um produto
-function adicionarProduto(nome, tipo, empresaCodigo, fornecedorCodigo, endereco, quantidade, fabricacao, validade) {
+function adicionarProduto(nome, tipo, empresaCodigo, fornecedorCodigo, endereco = '', quantidade = 0, fabricacao = '', validade = '') {
     const estoque = JSON.parse(localStorage.getItem('estoque'));
 
     // Verifica se o produto já existe
@@ -242,4 +242,42 @@ function adicionarFornecedor(nome, codigo) {
 function buscarTodosFornecedores() {
     const estoque = JSON.parse(localStorage.getItem('estoque'));
     return estoque.fornecedores || [];
+}
+
+// Função para adicionar um usuário
+function adicionarUsuario(nome, email, numero, usuario, senha) {
+    const estoque = JSON.parse(localStorage.getItem('estoque'));
+
+    // Verifica se a lista de usuários existe
+    if (!estoque.usuarios) {
+        estoque.usuarios = [];
+    }
+
+    // Verifica se o usuário já existe
+    const usuarioExistente = estoque.usuarios.find(u => u.usuario === usuario);
+    if (usuarioExistente) {
+        console.log('Usuário já existe:', usuarioExistente);
+        return false;
+    }
+
+    // Adiciona o novo usuário
+    estoque.usuarios.push({ nome, email, numero, usuario, senha });
+    localStorage.setItem('estoque', JSON.stringify(estoque));
+    console.log('Novo usuário adicionado:', { nome, email, numero, usuario, senha });
+    return true;
+}
+
+// Função para verificar o login
+function verificarLogin(usuario, senha) {
+    const estoque = JSON.parse(localStorage.getItem('estoque'));
+
+    // Verifica se o usuário existe e a senha está correta
+    const usuarioEncontrado = estoque.usuarios.find(u => u.usuario === usuario && u.senha === senha);
+    if (usuarioEncontrado) {
+        console.log('Login bem-sucedido para:', usuario);
+        return true;
+    } else {
+        console.log('Login falhou para:', usuario);
+        return false;
+    }
 }
