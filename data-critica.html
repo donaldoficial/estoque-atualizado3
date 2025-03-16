@@ -8,22 +8,6 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <!-- Menu Lateral -->
-    <div class="menu-lateral">
-        <button class="btn btn-primary" onclick="toggleMenu()">☰</button>
-        <div id="menu-conteudo" class="menu-conteudo">
-            <a href="cadastro-empresa.html">Cadastrar Empresa</a>
-            <a href="cadastro-produto.html">Cadastrar Produto</a>
-            <a href="enderecamento.html">Endereçamento</a>
-            <a href="movimentacao.html">Movimentação</a>
-            <a href="conferencia.html">Conferência</a>
-            <a href="entrada-nota.html">Entrada de Nota</a>
-            <a href="saida-nota.html">Saída de Nota</a>
-            <a href="gerenciar-produtos.html">Gerenciar Produtos</a>
-            <a href="data-critica.html">Data Crítica</a>
-        </div>
-    </div>
-
     <!-- Conteúdo Principal -->
     <div class="container mt-5">
         <h1>Data Crítica</h1>
@@ -45,6 +29,7 @@
             <thead>
                 <tr>
                     <th>Produto</th>
+                    <th>Fornecedor</th>
                     <th>Quantidade</th>
                     <th>Fabricação</th>
                     <th>Validade</th>
@@ -60,7 +45,7 @@
     <script src="estoque.js"></script>
     <script>
         // Preenche as opções de empresas
-        const estoque = JSON.parse(localStorage.getItem('estoque')) || { empresas: [], produtos: [], movimentacoes: [] };
+        const estoque = JSON.parse(localStorage.getItem('estoque')) || { empresas: [], produtos: [], movimentacoes: [], fornecedores: [] };
         const selectEmpresas = document.getElementById('empresa');
         estoque.empresas.forEach(empresa => {
             const option = document.createElement('option');
@@ -129,10 +114,12 @@
             movimentacoes.forEach(movimentacao => {
                 const produto = estoque.produtos.find(p => p.nome === movimentacao.produto);
                 if (produto) {
+                    const fornecedor = estoque.fornecedores.find(f => f.codigo === produto.fornecedorCodigo);
                     const { terco, alerta, dataCritica } = calcularTerco(produto.fabricacao, produto.validade);
                     const row = document.createElement('tr');
                     row.innerHTML = `
                         <td>${movimentacao.produto}</td>
+                        <td>${fornecedor ? fornecedor.nome : 'N/A'}</td>
                         <td>${movimentacao.quantidade}</td>
                         <td>${formatarDataBrasileira(produto.fabricacao)}</td>
                         <td>${formatarDataBrasileira(produto.validade)}</td>
@@ -151,12 +138,6 @@
             const empresaCodigo = document.getElementById('empresa').value;
             carregarMovimentacoes(empresaCodigo);
         });
-
-        // Função para alternar o menu lateral
-        function toggleMenu() {
-            const menu = document.getElementById('menu-conteudo');
-            menu.classList.toggle('menu-aberto');
-        }
     </script>
 </body>
 </html>
