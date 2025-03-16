@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro de Usuário</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f8f9fa;
+        }
+        .cadastro-container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            width: 300px;
+        }
+        .cadastro-container h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .cadastro-container .form-control {
+            margin-bottom: 15px;
+        }
+        .cadastro-container .btn {
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div class="cadastro-container">
+        <h2>Cadastro de Usuário</h2>
+        <form id="cadastroForm">
+            <div class="form-group">
+                <input type="text" class="form-control" id="nome" placeholder="Nome" required>
+            </div>
+            <div class="form-group">
+                <input type="email" class="form-control" id="email" placeholder="Email" required>
+            </div>
+            <div class="form-group">
+                <input type="text" class="form-control" id="numero" placeholder="Número" required>
+            </div>
+            <div class="form-group">
+                <input type="text" class="form-control" id="usuario" placeholder="Usuário" required>
+            </div>
+            <div class="form-group">
+                <input type="password" class="form-control" id="senha" placeholder="Senha" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Cadastrar</button>
+        </form>
+        <p class="text-center mt-3">
+            <a href="login.html">Voltar para o login</a>
+        </p>
+    </div>
+
+    <script>
+        document.getElementById('cadastroForm').addEventListener('submit', function(event) {
+            event.preventDefault(); // Impede o envio padrão do formulário
+
+            // Captura os valores dos campos
+            const nome = document.getElementById('nome').value;
+            const email = document.getElementById('email').value;
+            const numero = document.getElementById('numero').value;
+            const usuario = document.getElementById('usuario').value;
+            const senha = document.getElementById('senha').value;
+
+            console.log('Dados do formulário:', { nome, email, numero, usuario, senha }); // Log para depuração
+
+            // Tenta adicionar o usuário
+            if (adicionarUsuario(nome, email, numero, usuario, senha)) {
+                console.log('Cadastro bem-sucedido! Redirecionando para login.html'); // Log para depuração
+                alert('Cadastro realizado com sucesso!');
+                window.location.href = 'login.html';
+            } else {
+                console.log('Erro: Usuário já existe!'); // Log para depuração
+                alert('Erro: Usuário já existe!');
+            }
+        });
+    </script>
+    <script src="estoque.js"></script>
+</body>
+</html>
